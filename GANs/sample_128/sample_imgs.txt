@@ -1,0 +1,1 @@
+This folder contains sample iris images of 128x128 dimension.
