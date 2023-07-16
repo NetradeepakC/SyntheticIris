@@ -157,11 +157,10 @@ class TrainLoop:
         ):
             batch, cond = next(self.data)
             self.run_step(batch, cond)
-            print(self.step,end=" ")
+            print(self.step)
             if self.step % self.log_interval == 0:
-                print("")
                 logger.dumpkvs()
-            if (self.step % self.save_interval and (not self.step==0)) == 0:
+            if ((self.step % self.save_interval==0) and (not self.step==0)):
                 self.save()
                 # Run for a finite amount of time in integration tests.
                 if os.environ.get("DIFFUSION_TRAINING_TEST", "") and self.step > 0:

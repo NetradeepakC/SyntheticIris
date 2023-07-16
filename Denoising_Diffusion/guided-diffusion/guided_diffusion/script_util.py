@@ -21,6 +21,7 @@ def diffusion_defaults():
         predict_xstart=False,
         rescale_timesteps=False,
         rescale_learned_sigmas=False,
+        noise_folder="",
     )
 
 
@@ -95,6 +96,7 @@ def create_model_and_diffusion(
     resblock_updown,
     use_fp16,
     use_new_attention_order,
+    noise_folder,
 ):
     model = create_model(
         image_size,
@@ -148,6 +150,8 @@ def create_model(
     if channel_mult == "":
         if image_size == 512:
             channel_mult = (0.5, 1, 1, 2, 2, 4, 4)
+        elif image_size == 320:
+            channel_mult = (0.4, 1, 2, 3, 4)
         elif image_size == 256:
             channel_mult = (1, 1, 2, 2, 4, 4)
         elif image_size == 128:

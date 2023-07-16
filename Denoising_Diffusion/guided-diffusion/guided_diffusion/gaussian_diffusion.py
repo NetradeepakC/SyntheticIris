@@ -400,7 +400,7 @@ class GaussianDiffusion:
         clip_denoised=True,
         denoised_fn=None,
         cond_fn=None,
-        model_kwargs=None,
+        model_kwargs=None
     ):
         """
         Sample x_{t-1} from the model at the given timestep.
@@ -529,7 +529,7 @@ class GaussianDiffusion:
                     clip_denoised=clip_denoised,
                     denoised_fn=denoised_fn,
                     cond_fn=cond_fn,
-                    model_kwargs=model_kwargs,
+                    model_kwargs=model_kwargs
                 )
                 yield out
                 img = out["sample"]

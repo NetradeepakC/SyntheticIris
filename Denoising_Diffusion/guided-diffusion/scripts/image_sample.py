@@ -9,6 +9,7 @@ import os
 import numpy as np
 import torch as th
 import torch.distributed as dist
+import cv2
 
 from guided_diffusion import dist_util, logger
 from guided_diffusion.script_util import (
@@ -41,6 +42,29 @@ def main():
     logger.log("sampling...")
     all_images = []
     all_labels = []
+    noises=[]
+    shape=(args.batch_size, 3, args.image_size, args.image_size)
+    if(args.noise_folder is not None):
+        c=0
+        n=0
+        noise=np.zeros(shape)
+        dir_path=args.noise_folder
+        for i in os.listdir(dir_path):
+            if(n>=args.num_samples and c==0):
+                break
+            if(i[-3:]=='png'):
+                image_path = os.path.join(dir_path, i)
+                image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+                for i in range(len(image)):
+                    for j in range(len(image[0])):
+                        noise[c][0][i][j]=image[i][j][0]
+                        noise[c][1][i][j]=image[i][j][1]
+                        noise[c][2][i][j]=image[i][j][2]
+                c+=1
+                n+=1
+                if(c==args.batch_size):
+                    noises.append(th.from_numpy(np.float32(noise)).to(dist_util.dev()))
+                    c=0
     while len(all_images) * args.batch_size < args.num_samples:
         model_kwargs = {}
         if args.class_cond:
@@ -53,9 +77,10 @@ def main():
         )
         sample = sample_fn(
             model,
-            (args.batch_size, 3, args.image_size, args.image_size),
+            shape,
             clip_denoised=args.clip_denoised,
             model_kwargs=model_kwargs,
+            noise= (noises[len(all_images)] if len(all_images)<len(noises) else None)
         )
         sample = ((sample + 1) * 127.5).clamp(0, 255).to(th.uint8)
         sample = sample.permute(0, 2, 3, 1)
