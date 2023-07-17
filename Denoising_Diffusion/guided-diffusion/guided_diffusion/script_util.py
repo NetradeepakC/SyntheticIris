@@ -151,7 +151,7 @@ def create_model(
         if image_size == 512:
             channel_mult = (0.5, 1, 1, 2, 2, 4, 4)
         elif image_size == 320:
-            channel_mult = (0.4, 1, 2, 3, 4)
+            channel_mult = (0.8, 1, 1, 2, 2, 4, 4)
         elif image_size == 256:
             channel_mult = (1, 1, 2, 2, 4, 4)
         elif image_size == 128:
